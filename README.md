@@ -4,6 +4,16 @@
 
 Outil en ligne de commande en **Python** qui récupère les cours de bourse (actions, indices, crypto) via Yahoo Finance, calcule des indicateurs financiers et génère un **rapport Excel** prêt à l'emploi.
 
+## Aperçu du rapport
+
+**Feuille de synthèse** : comparaison des actifs, performance colorée selon le signe.
+
+![Feuille de synthèse](docs/synthese.png)
+
+**Feuille par actif** : cours de clôture et moyennes mobiles 20 / 50 jours.
+
+![Graphique AAPL](docs/graphique.png)
+
 ## Fonctionnalités
 
 - Récupération de l'historique de plusieurs actifs en une commande (`AAPL`, `MC.PA`, `BTC-USD`…)

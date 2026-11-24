@@ -16,8 +16,9 @@ from .indicators import add_indicators, summarize
 
 HEADER_FILL = PatternFill("solid", fgColor="1F4E78")
 HEADER_FONT = Font(bold=True, color="FFFFFF")
-GREEN_FILL = PatternFill("solid", fgColor="C6EFCE")
-RED_FILL = PatternFill("solid", fgColor="FFC7CE")
+# En mise en forme conditionnelle, Excel lit bgColor : on renseigne les deux
+GREEN_FILL = PatternFill("solid", fgColor="C6EFCE", bgColor="C6EFCE")
+RED_FILL = PatternFill("solid", fgColor="FFC7CE", bgColor="FFC7CE")
 
 
 def _style_header(ws: Worksheet, n_cols: int) -> None:
@@ -71,6 +72,18 @@ def _write_ticker_sheet(ws: Worksheet, df: pd.DataFrame) -> None:
     chart.y_axis.title = "Prix"
     chart.x_axis.number_format = "mmm yy"
     chart.height, chart.width = 9, 22
+    chart.legend.position = "r"
+    chart.x_axis.tickLblSkip = 21  # environ une étiquette par mois de bourse
+    chart.x_axis.tickMarkSkip = 21
+    # Sans cela, les versions récentes d'Excel masquent les axes des graphiques openpyxl
+    chart.x_axis.delete = False
+    chart.y_axis.delete = False
+    # Échelle adaptée aux prix (sinon l'axe part de 0 et la courbe est écrasée)
+    low, high = data["Close"].min(), data["Close"].max()
+    margin = (high - low) * 0.1 or abs(low) * 0.1 or 1
+    chart.y_axis.scaling.min = round(max(low - margin, 0), 2)
+    chart.y_axis.scaling.max = round(high + margin, 2)
+    chart.y_axis.number_format = "#,##0"
     cols = list(data.columns)
     for name in ("Close", "MM20", "MM50"):
         idx = cols.index(name) + 1
